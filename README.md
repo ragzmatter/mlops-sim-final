@@ -3,7 +3,7 @@
 Start here. This is the up-to-date, consolidated version of everything built
 across the whole session.
 
-## Read in this order
+### Read in this order
 1. **ORCHESTRATED_SETUP.md** — the real/production-style path. Install infra
    once, then `git push` does everything (includes self-hosted runner setup).
 2. **MANUAL_VERIFICATION.md** — optional, stage-by-stage manual walkthrough
@@ -15,7 +15,7 @@ across the whole session.
    (still accurate for command syntax; superseded in structure by the 3 files
    above, kept for depth/troubleshooting detail).
 
-## Folder map
+### Folder map
 ```
 mlops-sim/
 ├── README.md                      <- you are here
