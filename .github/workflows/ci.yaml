@@ -1,0 +1,86 @@
+name: CI - Build, Test, Push Image
+
+on:
+  push:
+    branches: [main]
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/mlops-sim
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+
+      - name: Install deps & smoke-test pipeline scripts
+        run: |
+          pip install -q pandas numpy scikit-learn joblib pyarrow
+          python data/generate_dataset.py
+          ARTIFACT_DIR=data python feature-engineering/feature_engineering.py
+          ARTIFACT_DIR=data python training/train.py
+          ARTIFACT_DIR=data python evaluation/evaluate.py
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      # NOTE: in this local-kind simulation, Argo CD does NOT auto-pull this
+      # new tag (that needs Argo Image Updater, a separate component).
+      # For the simulation: after this step, run `kind load docker-image`
+      # locally and let Argo CD's selfHeal just keep manifests in sync.
+      # This mirrors real setups where CI builds/pushes and a separate
+      # GitOps/image-update controller bumps the deployed tag.
+
+  trigger-kfp:
+    needs: build-test-push
+    runs-on: self-hosted   # MUST run on your laptop's runner — reaches localhost:8888
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Load new image into local kind cluster
+        run: |
+          docker build -t mlops-sim:local .
+          docker tag mlops-sim:local localhost:30050/mlops-sim:latest
+          docker push localhost:30050/mlops-sim:latest
+          kind load docker-image mlops-sim:local --name mlops-sim
+
+      - name: Compile pipeline
+        run: |
+          pip install -q kfp
+          python3 kubeflow/pipeline.py
+
+      - name: Submit KFP run
+        run: |
+          python3 - << 'EOF'
+          import kfp
+          client = kfp.Client(host="http://localhost:8888")
+          run = client.create_run_from_pipeline_package(
+              "pipeline.yaml",
+              arguments={"mlflow_uri": "http://mlflow-svc.mlops-training.svc.cluster.local:5000"},
+              run_name=f"ci-triggered-{__import__('os').environ.get('GITHUB_SHA','local')[:7]}"
+          )
+          print("KFP Run ID:", run.run_id)
+          EOF
+

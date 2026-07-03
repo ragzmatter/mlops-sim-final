@@ -1,0 +1,13 @@
+# DEPRECATED — superseded by KFP Recurring Run (kubeflow/recurring_run.py).
+# Kept here only for reference/comparison. Do NOT kubectl apply this anymore
+# if you're using the orchestrated KFP setup — it would cause double retraining.
+#
+# Recurring Run advantage over this CronJob:
+#   - shows up in KFP UI alongside all other runs (same Experiments/Runs view)
+#   - full DAG + per-step logs + artifact lineage, not just kubectl logs
+#   - reuses the SAME pipeline.py definition as the main CI-triggered run
+#   - one place to change pipeline logic instead of two (cronjob.yaml + retrain.py)
+#
+# apiVersion: batch/v1
+# kind: CronJob
+# ... (original spec preserved below for reference only)

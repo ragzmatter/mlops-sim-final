@@ -1,0 +1,31 @@
+# Redis — online store backend for Feast. Infra (Category A): apply once, manually.
+# NOTE: the materialization Job that used to live here has been MOVED into
+# kubeflow/pipeline.py as feast_materialize_op() — it's pipeline work (Category B),
+# so KFP creates/destroys that pod per run instead of it sitting here standalone.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: mlops-data
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: redis}}
+  template:
+    metadata: {labels: {app: redis}}
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports: [{containerPort: 6379}]
+          resources:
+            requests: {memory: 128Mi, cpu: 100m}
+            limits:   {memory: 256Mi, cpu: 200m}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-svc
+  namespace: mlops-data
+spec:
+  selector: {app: redis}
+  ports: [{port: 6379, targetPort: 6379}]

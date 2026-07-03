@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+data/*.csv
+*.joblib
+*.parquet
+
+.venv/
+
+actions-runner/
+
+*.tar.gz
+
+logs/
+artifacts/
+mlruns/
+
+.env

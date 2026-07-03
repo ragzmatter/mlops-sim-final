@@ -1,0 +1,19 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30080   # model serving
+        hostPort: 30080
+      - containerPort: 30090   # prometheus
+        hostPort: 30090
+      - containerPort: 30500   # mlflow
+        hostPort: 30500
+      - containerPort: 30050   # local docker registry
+        hostPort: 30050
+      - containerPort: 30030   # grafana
+        hostPort: 30030
+  - role: worker
+    extraMounts:
+      - hostPath: /tmp/mlops-artifacts
+        containerPath: /mnt/artifacts
