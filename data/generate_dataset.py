@@ -10,9 +10,18 @@ Columns:
 import os
 import numpy as np
 import pandas as pd
+from pathlib import Path
 
-ART_DIR = os.environ.get("ARTIFACT_DIR", "/home/claude/mlops-sim/data")
-OUT_PATH = os.path.join(ART_DIR, "raw_ad_data.csv")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+ART_DIR = Path(
+    os.environ.get(
+        "ARTIFACT_DIR",
+        PROJECT_ROOT / "artifacts"
+    )
+)
+
+OUT_PATH = ART_DIR / "raw_ad_data.csv"
 
 np.random.seed(42)
 N = 50_000
