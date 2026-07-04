@@ -3,6 +3,8 @@
 Start here. This is the up-to-date, consolidated version of everything built
 across the whole session.
 
+# Adding the sequence list below (just for ci.yaml update)
+
 ### Read in this order
 1. **ORCHESTRATED_SETUP.md** — the real/production-style path. Install infra
    once, then `git push` does everything (includes self-hosted runner setup).
