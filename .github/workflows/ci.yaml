@@ -7,7 +7,7 @@ on:
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/mlops-sim
   ARTIFACT_DIR: artifacts
-  MLFLOW_TRACKING_URI: file:./mlruns
+  MLFLOW_TRACKING_URI: sqlite:///mlflow.db
 
 jobs:
   build-test-push:
