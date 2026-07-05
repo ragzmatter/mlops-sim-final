@@ -70,7 +70,7 @@ jobs:
 
       - name: Compile pipeline
         run: |
-          pip install -q kfp
+          pip install -q kfp --break-system-packages
           python3 kubeflow/pipeline.py
 
       - name: Submit KFP run
