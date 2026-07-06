@@ -15,3 +15,25 @@ artifacts/
 mlruns/
 
 .env
+
+# GitHub Actions Runner
+_work/
+_diag/
+bin/
+externals/
+
+.credentials
+.credentials_rsaparams
+.path
+.runner
+.service
+
+config.sh
+env.sh
+run.sh
+runsvc.sh
+safe_sleep.sh
+svc.sh
+run-helper.sh
+run-helper.sh.template
+run-helper.cmd.template

@@ -1,7 +1,7 @@
 # MANUAL_VERIFICATION.md
 Run each stage by hand, in order, verifying output before moving to next. Use this to learn — not needed once orchestrated mode (KFP) works.
 
-#
+###
 
 ## 1. Feature Engineering
 ```bash
