@@ -17,7 +17,7 @@ spec:
             - server
             - --host=0.0.0.0
             - --port=5000
-            - --backend-store-uri=/mnt/artifacts/mlflow
+            - --backend-store-uri=sqlite:////mnt/artifacts/mlflow/mlflow.db
             - --default-artifact-root=/mnt/artifacts/mlflow-artifacts
           ports: [{containerPort: 5000}]
           volumeMounts: [{name: artifacts, mountPath: /mnt/artifacts}]
